@@ -10,7 +10,8 @@ class account
 {
 	private: 
 	char name[30], account_type[7];
-	int deposit, account_number, withdraw;
+	int deposit, account_number;
+	unsigned long int withdraw;
 	public: 
 	void new_account();
 	void modify();
@@ -73,7 +74,16 @@ void account::modify_withdraw_amount()
 {
 	cout<<"\nEnter Amount to be withdrawn: ";
 	cin>>withdraw;
-	deposit = deposit - withdraw;
+	if(withdraw <= deposit)
+	{
+		deposit = deposit - withdraw;
+		cout<<"\n************* Withdraw Updated Successfully ****************"<<endl;	
+	}
+	else
+	{
+		cout<<"\nSorry! Withdraw is not possible!"<<endl;
+	}
+	
 }
 int account::return_withdraw_amount()
 {
@@ -248,8 +258,7 @@ void deposit_amount()
 void withdraw_amount()
 {
 	account a; 
-	bool found = false;
-	bool check_withdraw = false; 
+	bool found = false; 
 	int acc_no;
 	fstream file; 
 	cout<<"\nEnter your A/C number: ";
@@ -261,26 +270,17 @@ void withdraw_amount()
 		if(acc_no == a.return_acc_no())
 		{
 			a.show_account();
-			a.modify_withdraw_amount();
-			if(a.return_withdraw_amount() > a.return_deposit_amount())
-			{
-				cout<<"\nSorry! Withdraw is not possible!!"<<endl;
-				getch();
-				check_withdraw = true;
-			}
-			else
-			{
 			found = true;
+			a.modify_withdraw_amount();
 			int position; 
 			position = sizeof(account);
 			file.seekp(-position, ios::cur);
 			file.write((char*)&a, sizeof(account));
-			cout<<"\n************* Withdraw Updated Successfully ****************"<<endl;
 			getch();
-			}
+			
 		}
 	}
-	if(found == false && check_withdraw == false)
+	if(found == false)
 	{
 		cout<<"\nAccount not found!!! Create an accont first"<<endl;
 		getch();
